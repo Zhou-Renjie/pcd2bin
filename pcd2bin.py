@@ -31,12 +31,12 @@ def main():
         type=str,
         default="/home/user/lidar_bin"
     )
-    parser.add_argument(
-        "--file_name",
-        help="File name.",
-        type=str,
-        default="file_name"
-    )
+    # parser.add_argument(
+    #     "--file_name",
+    #     help="File name.",
+    #     type=str,
+    #     default="file_name"
+    # )
     args = parser.parse_args()
 
     ## Find all pcd files
@@ -84,8 +84,9 @@ def main():
         pc = pypcd.PointCloud.from_path(pcd_file)
 
         ## Generate bin file name
-        bin_file_name = "{}_{:05d}.bin".format(args.file_name, seq)
-        bin_file_path = os.path.join(args.bin_path, bin_file_name)
+        # bin_file_name = "{}_{:05d}.bin".format(args.file_name, seq)
+        bin_file_name = pcd_file.split('/')[-1].replace('.pcd', '.bin')
+        bin_file_path = os.path.join(args.bin_path, os.path.split(bin_file_name)[-1])
         
         ## Get data from pcd (x, y, z, intensity, ring, time)
         np_x = (np.array(pc.pc_data['x'], dtype=np.float32)).astype(np.float32)
@@ -101,10 +102,10 @@ def main():
         ## Save bin file                                    
         points_32.tofile(bin_file_path)
 
-        ## Write csv meta file
-        meta_file.writerow(
-            [os.path.split(pcd_file)[-1], bin_file_name]
-        )
+        # ## Write csv meta file
+        # meta_file.writerow(
+        #     [os.path.split(pcd_file)[-1], bin_file_name]
+        # )
 
         seq = seq + 1
     
